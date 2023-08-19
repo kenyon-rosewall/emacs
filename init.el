@@ -10,12 +10,12 @@
   (setq use-package-always-ensure t
         use-package-expand-minimally t))
 
-; Stop Emacs from losing undo information by
-; setting very high limits for undo buffers
+;; Stop Emacs from losing undo information by
+;; setting very high limits for undo buffers
 (setq undo-limit 20000000)
 (setq undo-strong-limit 40000000)
 
-; Determine the underlying operating system
+;; Determine the underlying operating system
 (setq kenyon-osx nil)
 (setq kenyon-linux nil)
 (setq kenyon-windows t)
@@ -119,12 +119,40 @@
 (define-key global-map [C-tab] 'indent-for-tab-command)
 (define-key global-map [M-tab] 'indent-region)
 
+(defun insert-line-below ()
+  (interactive)
+  (end-of-line)
+  (newline-and-indent))  
+(defun insert-line-above ()
+  (interactive)
+  (previous-line)
+  (end-of-line)
+  (newline-and-indent))
+(global-set-key (kbd "<C-return>") 'insert-line-below)
+(global-set-key (kbd "C-<S-return>") 'insert-line-above)
+
+(defun kb-scroll-up-hold-cursor ()
+  (interactive)
+  (scroll-up-command 1))
+(defun kb-scroll-down-hold-cursor ()
+  (interactive)
+  (scroll-down-command 1))
+(global-set-key (kbd "C-9") 'kb-scroll-up-hold-cursor)
+(global-set-key (kbd "C-0") 'kb-scroll-down-hold-cursor)
+
 (use-package move-text
   :config
   (move-text-default-bindings))
 
 (when (fboundp 'windmove-default-keybindings)
   (windmove-default-keybindings))
+
+(defun transpose-backwords ()
+  "Transpose words backwords"
+  (interactive)
+  (transpose-words -1))
+(global-set-key (kbd "C-=") 'transpose-words)
+(global-set-key (kbd "C-/") 'transpose-backwords)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
