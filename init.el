@@ -140,6 +140,22 @@
 (global-set-key (kbd "C-9") 'kb-scroll-up-hold-cursor)
 (global-set-key (kbd "C-0") 'kb-scroll-down-hold-cursor)
 
+(use-package consult
+  :bind (
+	 ("C-x b" . consult-buffer)
+	 ("M-g g" . consult-goto-line)
+	 ("C-s" . consult-line))
+  :hook (completion-list-mode . consult-preview-at-point-mode)
+  :config
+  (consult-customize
+   consult-theme :preview-key '(:debounce 0.2 any)
+   consult-ripgrep consult-git-grep consult-grep
+   consult-bookmark consult-recent-file consult-xref
+   consult--source-bookmark consult--source-file-register
+   consult--source-recent-file consult--source-project-recent-file
+   :preview-key '(:debounce 0.4 any))
+  (setq consult-narrow-key "<"))
+
 (use-package move-text
   :config
   (move-text-default-bindings))
@@ -153,6 +169,14 @@
   (transpose-words -1))
 (global-set-key (kbd "C-=") 'transpose-words)
 (global-set-key (kbd "C-/") 'transpose-backwords)
+
+(use-package magit
+  :init
+  (message "Loading Magit!")
+  :config
+  (message "Loaded Magit!")
+  :bind (("C-x g" . magit-status)
+         ("C-x C-g" . magit-status)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
