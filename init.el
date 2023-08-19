@@ -1,3 +1,14 @@
+(require 'package)
+(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(package-initialize)
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(eval-and-compile
+  (setq use-package-always-ensure t
+        use-package-expand-minimally t))
 
 ; Stop Emacs from losing undo information by
 ; setting very high limits for undo buffers
@@ -31,16 +42,25 @@
 )
 
 (load-library "view")
-(require 'ivy)
-(ivy-mode 1)
-(setq ivy-use-virtual-buffers t)
-(setq ivy-count-format "(%d/%d) ")
-(projectile-mode +1)
-(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-					; Themes
-(add-to-list 'custom-theme-load-path "~/.emacs.d/elpa")
-(load-theme 'dracula t)
+
+(use-package counsel
+  :config
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-count-format "(%d/%d) "))
+
+(use-package projectile
+  :ensure t
+  :bind-keymap ("s-p" . projectile-command-map)
+  :init
+  (setq projectile-mode-line-function '(lambda () (format " [%s]" (projectile-project-name))))
+  :config
+  (projectile-mode +1))
+
+(use-package dracula-theme
+  :config
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/elpa")
+  (load-theme 'dracula t))
 
 (defun frame-center ()
   "Center the current frame."
@@ -57,7 +77,8 @@
 (frame-center)
 (split-window-horizontally)
 
-(tool-bar-mode 0)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
 (display-time)
 (global-hl-line-mode 1)
 (scroll-bar-mode -1)
@@ -98,7 +119,10 @@
 (define-key global-map [C-tab] 'indent-for-tab-command)
 (define-key global-map [M-tab] 'indent-region)
 
-(move-text-default-bindings)
+(use-package move-text
+  :config
+  (move-text-default-bindings))
+
 (when (fboundp 'windmove-default-keybindings)
   (windmove-default-keybindings))
 
@@ -132,8 +156,3 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-;;(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-(package-initialize)
