@@ -51,10 +51,10 @@ projectile*
 /.emacs.desktop
 /.emacs.desktop.lock
 *.elc
-auto-save-list
 tramp
 .\#*
 
 .DS_Store
 recentf
 transient/
+ido.last
