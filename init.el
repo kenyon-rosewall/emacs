@@ -80,6 +80,15 @@
    '(font-lock-string-face ((t (:foreground "#bdba81"))))))
 
 ;;
+;; ALL THE ICONS
+;;
+(use-package all-the-icons
+  :ensure t
+  :if (display-graphic-p))
+(use-package all-the-icons-dired
+  :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+
+;;
 ;; FONTS
 ;;
 (set-face-attribute 'default nil
@@ -137,7 +146,9 @@
   (setq ivy-use-virtual-buffers t)
   (setq ivy-count-format "(%d/%d) ")
   (ivy-mode 1))
-
+(use-package all-the-icons-ivy-rich
+  :ensure t
+  :init (all-the-icons-ivy-rich-mode 1))
 (use-package ivy-rich
   :after ivy
   :ensure t
@@ -217,6 +228,10 @@
   (interactive)
   (transpose-words -1))
 
+(defun open-config-file ()
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
+
 ;;
 ;; GENERAL/CUSTOM KEYBINDINGS
 ;;
@@ -226,6 +241,8 @@
    "C-o" 'find-file
    ;;"C-s" 'save-buffer
 
+   "C-c C-c" 'open-config-file
+   
    "<C-return>" 'insert-line-below
    "C-<S-return>" 'insert-line-above
    "C-9" 'scroll-up-hold-cursor
