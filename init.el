@@ -205,7 +205,7 @@
   (setq consult-narrow-key "<"))
 
 ;;
-;; MOVE TEXT
+;; MOVE-TEXT/WINDMOVE
 ;;
 (use-package move-text
   :config
