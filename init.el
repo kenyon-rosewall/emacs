@@ -37,29 +37,24 @@
     (load "./elpaca-autoloads")))
 (add-hook 'after-init-hook #'elpaca-process-queues)
 (elpaca `(,@elpaca-order))
-
 ;; Install use-package support
 (elpaca elpaca-use-package
   ;; Enable :elpaca use-package keyword.
   (elpaca-use-package-mode)
   ;; Assume :elpaca t unless otherwise specified.
   (setq elpaca-use-package-by-default t))
-
 ;; Block until current queue processed.
 (elpaca-wait)
-
 ;;When installing a package which modifies a form used at the top-level
 ;;(e.g. a package which adds a use-package key word),
 ;;use `elpaca-wait' to block until that package has been installed/configured.
 ;;For example:
 ;;(use-package general :demand t)
 ;;(elpaca-wait)
-
 ;;Turns off elpaca-use-package-mode current declartion
 ;;Note this will cause the declaration to be interpreted immediately (not deferred).
 ;;Useful for configuring built-in emacs features.
 ;;(use-package emacs :elpaca nil :config (setq ring-bell-function #'ignore))
-
 ;; Don't install anything. Defer execution of BODY
 ;;(elpaca nil (message "deferred"))
 
@@ -110,12 +105,10 @@
 		    :slant 'italic)
 (set-face-attribute 'font-lock-keyword-face nil
 		    :slant 'italic)
-
 ;; This sets the default font on all graphical frames created after restarting Emacs.
 ;; Does the same thing as 'set-face-attribute default' above, but emacsclient fonts
 ;; are not right unless I also add this method of setting the default font.
 (add-to-list 'default-frame-alist '(font . "JetBrains Mono-11"))
-
 ;; Uncomment the following line if line spacing needs adjusting.
 (setq-default line-spacing 0.12)
 
@@ -175,11 +168,9 @@
   :after esh-mode
   :config
   (eshell-syntax-highlighting-global-mode +1))
-
 ;; eshell-syntax-highlighting -- adds fish/zsh-like syntax highlighting.
 ;; eshell-rc-script -- your profile for eshell; like a bashrc for eshell.
 ;; eshell-aliases-file -- sets an aliases file for the eshell.
-
 (setq eshell-history-size 5000
       eshell-buffer-maximum-lines 5000
       eshell-hist-ignoredups t
@@ -193,15 +184,6 @@
 (use-package magit
   :bind (("C-x g" . magit-status)
          ("C-x C-g" . magit-status)))
-
-;;
-;; MOVE TEXT
-;;
-(use-package move-text
-  :config
-  (move-text-default-bindings))
-(when (fboundp 'windmove-default-keybindings)
-  (windmove-default-keybindings))
 
 ;;
 ;; CONSULT
@@ -223,6 +205,15 @@
   (setq consult-narrow-key "<"))
 
 ;;
+;; MOVE TEXT
+;;
+(use-package move-text
+  :config
+  (move-text-default-bindings))
+(when (fboundp 'windmove-default-keybindings)
+  (windmove-default-keybindings))
+
+;;
 ;; FUNCTIONS
 ;;
 (defun replace-in-region (old-word new-word)
@@ -232,7 +223,7 @@
 		    (narrow-to-rgion (mark) (point))
 		    (beginning-of-buffer)
 		    (replace-string old-word new-word))))
-
+;;;
 (defun insert-line-above ()
   (interactive)
   (previous-line)
@@ -242,18 +233,18 @@
   (interactive)
   (end-of-line)
   (newline-and-indent))
-
+;;;
 (defun scroll-up-hold-cursor ()
   (interactive)
   (scroll-up-command 1))
 (defun scroll-down-hold-cursor ()
   (interactive)
   (scroll-down-command 1))
-
+;;;
 (defun transpose-backwords ()
   (interactive)
   (transpose-words -1))
-
+;;;
 (defun open-config-file ()
   (interactive)
   (find-file "~/.emacs.d/init.el"))
@@ -265,15 +256,18 @@
   :config
   (general-define-key
    "C-o" 'find-file
-   ;;"C-s" 'save-buffer
-
+   ;;; Buffers
+   "M-r" 'revert-buffer
+   "M-k" 'kill-this-buffer
+   "M-s" 'save-buffer
+   ;;;
    "C-c C-c" 'open-config-file
-   
+   ;;;
    "<C-return>" 'insert-line-below
    "C-<S-return>" 'insert-line-above
    "C-9" 'scroll-up-hold-cursor
    "C-0" 'scroll-down-hold-cursor
-
+   ;;;
    "C-=" 'transpose-words
    "C-/" 'transpose-backwords
    ))
