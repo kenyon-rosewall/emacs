@@ -162,6 +162,13 @@
   (exec-path-from-shell-initialize))
 
 ;;
+;; Projectile
+;;
+(use-package projectile
+  :config
+  (projectile-mode 1))
+
+;;
 ;; ESHELL
 ;;
 (use-package eshell-syntax-highlighting
@@ -203,6 +210,30 @@
    consult--source-recent-file consult--source-project-recent-file
    :preview-key '(:debounce 0.4 any))
   (setq consult-narrow-key "<"))
+
+;;
+;; DASHBOARD
+;;
+(use-package dashboard
+  :ensure t 
+  :init
+  (setq initial-buffer-choice 'dashboard-open)
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-banner-logo-title "Emacs Is More Than A Text Editor!")
+  (setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+  ;;(setq dashboard-startup-banner "/home/dt/.config/emacs/images/dtmacs-logo.png")  ;; use custom image as banner
+  (setq dashboard-center-content nil) ;; set to 't' for centered content
+  (setq dashboard-items '((recents . 5)
+                          (agenda . 5 )
+                          (bookmarks . 3)
+                          (projects . 3)
+                          (registers . 3)))
+  :custom 
+  (dashboard-modify-heading-icons '((recents . "file-text")
+				    (bookmarks . "book")))
+  :config
+  (dashboard-setup-startup-hook))
 
 ;;
 ;; MOVE-TEXT/WINDMOVE
