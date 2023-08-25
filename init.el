@@ -1,5 +1,5 @@
 ;;
-;; Install Elpaca
+;; ELPACA
 ;;
 (defvar elpaca-installer-version 0.5)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
@@ -81,7 +81,16 @@
   :ensure t
   :if (display-graphic-p))
 (use-package all-the-icons-dired
-  :hook (dired-mode . (lambda () (all-the-icons-dired-mode t))))
+  :hook
+  (dired-mode . (lambda () (all-the-icons-dired-mode t)))
+  (dired-sidebar-mode . (lambda () (all-the-icons-dired-mode))))
+
+;;
+;; VSCODE ICONS
+;;
+(use-package vscode-icon
+  :ensure t
+  :commands (vscode-icon-for-file))
 
 ;;
 ;; FONTS
@@ -122,7 +131,6 @@
 (display-time)
 (global-display-line-numbers-mode 1)
 (global-visual-line-mode t)
-(split-window-horizontally)
 (global-hl-line-mode 1)
 (setq-default truncate-lines t)
 (setq truncate-partial-width-windows nil)
@@ -146,6 +154,7 @@
   :after ivy
   :ensure t
   :init (ivy-rich-mode 1) ;; this gets us descriptions in M-x.
+  :diminish
   :custom
   (ivy-virtual-abbreviate 'full
 			  ivy-rich-switch-buffer-align-virtual-buffer t
@@ -162,11 +171,44 @@
   (exec-path-from-shell-initialize))
 
 ;;
-;; Projectile
+;; DIMINISH
+;;
+(use-package diminish)
+
+;;
+;; LANGUAGE SUPPORT
+;;
+(use-package haskell-mode)
+(use-package lua-mode)
+(use-package typescript-mode)
+
+;;
+;; PROJECTILE
 ;;
 (use-package projectile
+  :bind (("M-p" . projectile-command-map))
   :config
   (projectile-mode 1))
+
+;;
+;; DIRED-SIDEBAR
+;;
+(use-package dired-sidebar
+  :bind (("C-`" . dired-sidebar-toggle-sidebar))
+  :ensure t
+  :commands (dired-sidebar-toggle-sidebar)
+  :init
+  (add-hook 'dired-sidebar-mode-hook
+	    (lambda ()
+	      (unless (file-remote-p default-directory)
+		(auto-revert-mode))))
+  :config
+  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+  (setq dired-sidebar-subtree-line-prefix "__")
+  (setq dired-sidebar-theme 'vscode)
+  (setq dired-sidebar-use-term-integration t)
+  (setq dired-sidebar-use-custom-font t))
 
 ;;
 ;; ESHELL
@@ -184,6 +226,25 @@
       eshell-scroll-to-bottom-on-input t
       eshell-destroy-buffer-when-process-dies t
       eshell-visual-commands'("bash" "fish" "htop" "ssh" "top" "zsh"))
+
+;;
+;; COMPANY
+;;
+(use-package company
+  :defer 2
+  :diminish
+  :custom
+  (company-begin-commands '(self-insert-command))
+  (company-idle-delay .1)
+  (company-minimum-prefix-length 2)
+  (company-show-numbers t)
+  (company-tooltip-align-annotations 't)
+  (global-company-mode t))
+
+(use-package company-box
+  :after company
+  :diminish
+  :hook (company-mode . company-box-mode))
 
 ;;
 ;; MAGIT
@@ -316,4 +377,26 @@
 (setq make-backup-file-name-function 'ignore)
 (setq make-backup-files nil)
 (setq create-lockfiles nil)
+
+;;
+;; WHICH KEY
+;;
+(use-package which-key
+  :init
+    (which-key-mode 1)
+  :diminish
+  :config
+  (setq which-key-side-window-location 'bottom
+	  which-key-sort-order #'which-key-key-order
+	  which-key-allow-imprecise-window-fit nil
+	  which-key-sort-uppercase-first nil
+	  which-key-add-column-padding 1
+	  which-key-max-display-columns nil
+	  which-key-min-display-lines 6
+	  which-key-side-window-slot -10
+	  which-key-side-window-max-height 0.25
+	  which-key-idle-delay 0.8
+	  which-key-max-description-length 25
+	  which-key-allow-imprecise-window-fit nil
+	  which-key-separator " → " ))
 
