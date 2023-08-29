@@ -170,6 +170,8 @@
   :init
   (exec-path-from-shell-initialize))
 
+;;; Adding a new comment here
+
 ;;
 ;; DIMINISH
 ;;
