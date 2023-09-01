@@ -158,10 +158,7 @@
   :custom
   (ivy-virtual-abbreviate 'full
 			  ivy-rich-switch-buffer-align-virtual-buffer t
-			  ivy-rich-path-style 'abbrev)
-  :config
-  (ivy-set-display-transformer 'ivy-switch-buffer
-                               'ivy-rich-switch-buffer-transformer))
+			  ivy-rich-path-style 'abbrev))
 
 ;;
 ;; ENV VARIABLES
@@ -169,6 +166,23 @@
 (use-package exec-path-from-shell
   :init
   (exec-path-from-shell-initialize))
+
+;;
+;; EVIL MODE
+;;
+(use-package evil
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-vsplit-window-right t)
+  (setq evil-split-window-below t)
+  (evil-mode))
+(use-package evil-collection
+  :after evil
+  :config
+  (setq evil-collection-mode-list '(dashboard dired ibuffer))
+  (evil-collection-init))
+(use-package evil-tutor)
 
 ;;
 ;; DIMINISH
@@ -226,25 +240,6 @@
       eshell-scroll-to-bottom-on-input t
       eshell-destroy-buffer-when-process-dies t
       eshell-visual-commands'("bash" "fish" "htop" "ssh" "top" "zsh"))
-
-;;
-;; COMPANY
-;;
-(use-package company
-  :defer 2
-  :diminish
-  :custom
-  (company-begin-commands '(self-insert-command))
-  (company-idle-delay .1)
-  (company-minimum-prefix-length 2)
-  (company-show-numbers t)
-  (company-tooltip-align-annotations 't)
-  (global-company-mode t))
-
-(use-package company-box
-  :after company
-  :diminish
-  :hook (company-mode . company-box-mode))
 
 ;;
 ;; MAGIT
@@ -318,13 +313,15 @@
 ;;;
 (defun insert-line-above ()
   (interactive)
-  (previous-line)
-  (end-of-line)
-  (newline-and-indent))
+  (evil-previous-line)
+  (evil-end-of-visual-line)
+  (newline-and-indent)
+  (evil-insert 1))
 (defun insert-line-below ()
   (interactive)
-  (end-of-line)
-  (newline-and-indent))
+  (evil-end-of-visual-line)
+  (newline-and-indent)
+  (evil-insert 1))
 ;;;
 (defun scroll-up-hold-cursor ()
   (interactive)
@@ -340,28 +337,107 @@
 (defun open-config-file ()
   (interactive)
   (find-file "~/.emacs.d/init.el"))
+;;;
+(defun reload-config-file ()
+  (interactive)
+  (load-file user-init-file))
+;;;
+(defun duplicate-line()
+  (interactive)
+  (move-beginning-of-line 1)
+  (kill-line)
+  (yank)
+  (open-line 1)
+  (next-line 1)
+  (yank))
 
 ;;
 ;; GENERAL/CUSTOM KEYBINDINGS
 ;;
 (use-package general
   :config
+  (general-evil-setup)
+  ;; Set up 'SPC' as the global leader key
+  (general-create-definer kr/leader-keys
+    :states '(normal insert visual emacs)
+    :keymaps 'override
+    :prefix "SPC"
+    :global-prefix "M-SPC")
+  (kr/leader-keys
+    "," '(find-file :wk "Find file")
+    "'" '(counsel-recentf :wk "Find recent files")
+    "." '(find-file-other-window :wk "Find file other window")
+    "c c" '(open-config-file :wk "Open config")
+    "c l" '((lambda () (interactive) (load-file user-init-file)) :wk "Reload emacs config"))
+  (kr/leader-keys
+   "b" '(:ignore t :wk "buffer")
+   "b b" '(switch-to-buffer :wk "Switch buffer")
+   "b i" '(ibuffer :wk "Ibuffer")
+   "b k" '(kill-this-buffer :wk "Kill this buffer")
+   "b n" '(next-buffer :wk "Next buffer")
+   "b p" '(previous-buffer :wk "Previous buffer")
+   "b r" '(revert-buffer :wk "Reload buffer")
+   "b s" '(save-buffer :wk "Save buffer")
+   "b c" '(save-buffers-kill-terminal :wk "Save and close"))
+  (kr/leader-keys
+    "e" '(:ignore t :wk "Eshell/Evaluate")
+    "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
+    "e f" '(eval-defun :wk "Evaluate function containing point")
+    "e e" '(eval-expression :wk "Evaluate an elisp expression")
+    "e h" '(counsel-esh-history :wk "Eshell history")
+    "e s" '(eshell :wk "Eshell"))
+  (kr/leader-keys
+    "h" '(:ignore t :wk "Help")
+    "h f" '(describe-function :wk "Describe function")
+    "h k" '(describe-key :wk "Describe keybinding")
+    "h c" '(describe-key-briefly :wk "Describe keybinding brief")
+    "h v" '(describe-variable :wk "Describe variable"))
+  (kr/leader-keys
+    "t" '(:ignore t :wk "Toggle")
+    "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
+    "t t" '(visual-line-mode :wk "Toggle word wrap")
+    "t p" '(dired-sidebar-toggle-sidebar :wk "Toggle sidebar"))
+  (kr/leader-keys
+    "w" '(:ignore t :wk "Windows")
+    "w c" '(evil-window-delete :wk "Close window")
+    "w n" '(evil-window-new :wk "New window")
+    "w s" '(evil-window-split :wk "Horizontal split")
+    "w v" '(evil-window-vsplit :wk "Vertical split")
+    "w w" '(delete-other-windows :wk "Next window")
+    "w O" '(buf-move-left :wk "Buffer move left")
+    "w E" '(buf-move-down :wk "Buffer move down")
+    "w >" '(buf-move-up :wk "Buffer move up")
+    "w U" '(buf-move-right :wk "Buffer move right"))
   (general-define-key
-   "C-o" 'find-file
-   ;;; Buffers
-   "M-r" 'revert-buffer
-   "M-k" 'kill-this-buffer
-   "M-s" 'save-buffer
-   ;;;
-   "C-c C-c" 'open-config-file
-   ;;;
+   :states 'normal
+   ;;; Movement
+   "o" 'evil-backward-char
+   "e" 'evil-next-line
+   "." 'evil-previous-line
+   "u" 'evil-forward-char
+   "h" 'left-word
+   "t" 'evil-forward-paragraph
+   "c" 'evil-backward-paragraph
+   "n" 'right-word
+   "C-o" 'evil-first-non-blank
+   "C-e" 'scroll-down-hold-cursor
+   "C-." 'scroll-up-hold-cursor
+   "C-u" 'evil-end-of-line
+   "C-h" 'beginning-of-buffer
+   "C-t" 'evil-scroll-page-down
+   "C-c" 'evil-scroll-page-up
+   "C-n" 'end-of-buffer
+   "M-." 'move-text-up
+   "M-e" 'move-text-down
+   )
+  (general-define-key
    "<C-return>" 'insert-line-below
    "C-<S-return>" 'insert-line-above
-   "C-9" 'scroll-up-hold-cursor
-   "C-0" 'scroll-down-hold-cursor
+   ;;"C-9" 'scroll-up-hold-cursor
+   ;;"C-0" 'scroll-down-hold-cursor
    ;;;
-   "C-=" 'transpose-words
-   "C-/" 'transpose-backwords
+   ;;"C-=" 'transpose-words
+   ;;"C-/" 'transpose-backwords
    ))
 
 ;;
