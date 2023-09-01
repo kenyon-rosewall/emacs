@@ -71,7 +71,7 @@
   ;; add one of these blocks for each of the themes you want to customize
   (custom-theme-set-faces
    'ample
-    ;; this will overwride the color of strings just for ample-theme
+   ;; this will overwride the color of strings just for ample-theme
    '(font-lock-string-face ((t (:foreground "#bdba81"))))))
 
 ;;
@@ -96,24 +96,24 @@
 ;; FONTS
 ;;
 (set-face-attribute 'default nil
-		    :font "JetBrains Mono"
-		    :height 110
-		    :weight 'medium)
+		                :font "JetBrains Mono"
+		                :height 110
+		                :weight 'medium)
 (set-face-attribute 'variable-pitch nil
-		    :font "Ubuntu"
-		    :height 120
-		    :weight 'medium)
+		                :font "Ubuntu"
+		                :height 120
+		                :weight 'medium)
 (set-face-attribute 'fixed-pitch nil
-		    :font "JetBrains Mono"
-		    :height 110
-		    :weight 'medium)
+		                :font "JetBrains Mono"
+		                :height 110
+		                :weight 'medium)
 ;; Makes commented text and keywords italics.
 ;; This is working in emacsclient but not emacs.
 ;; Your font must have an italic face available.
 (set-face-attribute 'font-lock-comment-face nil
-		    :slant 'italic)
+		                :slant 'italic)
 (set-face-attribute 'font-lock-keyword-face nil
-		    :slant 'italic)
+		                :slant 'italic)
 ;; This sets the default font on all graphical frames created after restarting Emacs.
 ;; Does the same thing as 'set-face-attribute default' above, but emacsclient fonts
 ;; are not right unless I also add this method of setting the default font.
@@ -130,14 +130,12 @@
 (setq scroll-step 3)
 (display-time)
 (global-display-line-numbers-mode 1)
-(global-visual-line-mode t)
+(global-visual-line-mode 1)
 (global-hl-line-mode 1)
-(setq-default truncate-lines t)
-(setq truncate-partial-width-windows nil)
 (defun nil-bell ())
 (setq ring-bell-function 'nil-bell)
-(setq tab-width 2
-      indent-tabs-mode nil)
+(setq-default tab-width 2
+	            indent-tabs-mode nil)
 
 ;;
 ;; IVY
@@ -157,8 +155,8 @@
   :diminish
   :custom
   (ivy-virtual-abbreviate 'full
-			  ivy-rich-switch-buffer-align-virtual-buffer t
-			  ivy-rich-path-style 'abbrev))
+			                    ivy-rich-switch-buffer-align-virtual-buffer t
+			                    ivy-rich-path-style 'abbrev))
 
 ;;
 ;; ENV VARIABLES
@@ -176,6 +174,7 @@
   (setq evil-want-keybinding nil)
   (setq evil-vsplit-window-right t)
   (setq evil-split-window-below t)
+  (setq evil-move-beyond-eol t)
   (evil-mode))
 (use-package evil-collection
   :after evil
@@ -213,9 +212,9 @@
   :commands (dired-sidebar-toggle-sidebar)
   :init
   (add-hook 'dired-sidebar-mode-hook
-	    (lambda ()
-	      (unless (file-remote-p default-directory)
-		(auto-revert-mode))))
+	          (lambda ()
+	            (unless (file-remote-p default-directory)
+	              (auto-revert-mode))))
   :config
   (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
   (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
@@ -252,10 +251,6 @@
 ;; CONSULT
 ;;
 (use-package consult
-  :bind (
-	 ("C-x b" . consult-buffer)
-	 ("M-g g" . consult-goto-line)
-	 ("C-s" . consult-line))
   :hook (completion-list-mode . consult-preview-at-point-mode)
   :config
   (consult-customize
@@ -287,7 +282,7 @@
                           (registers . 3)))
   :custom 
   (dashboard-modify-heading-icons '((recents . "file-text")
-				    (bookmarks . "book")))
+				                            (bookmarks . "book")))
   :config
   (dashboard-setup-startup-hook))
 
@@ -307,9 +302,9 @@
   "Perform a replace-string in the current region."
   (interactive "sReplac: \nsReplace: %s  With: ")
   (save-excursion (save-restriction
-		    (narrow-to-rgion (mark) (point))
-		    (beginning-of-buffer)
-		    (replace-string old-word new-word))))
+		                (narrow-to-rgion (mark) (point))
+		                (beginning-of-buffer)
+		                (replace-string old-word new-word))))
 ;;;
 (defun insert-line-above ()
   (interactive)
@@ -363,22 +358,26 @@
     :keymaps 'override
     :prefix "SPC"
     :global-prefix "M-SPC")
+  (general-create-definer kr/goto-keys
+    :states 'normal
+    :keymaps 'override
+    :prefix "g")
   (kr/leader-keys
     "," '(find-file :wk "Find file")
     "'" '(counsel-recentf :wk "Find recent files")
     "." '(find-file-other-window :wk "Find file other window")
     "c c" '(open-config-file :wk "Open config")
-    "c l" '((lambda () (interactive) (load-file user-init-file)) :wk "Reload emacs config"))
+    "c l" '((lambda () (interactive) (load-file user-init-file) (load-file user-inite-file)) :wk "Reload emacs config"))
   (kr/leader-keys
-   "b" '(:ignore t :wk "buffer")
-   "b b" '(switch-to-buffer :wk "Switch buffer")
-   "b i" '(ibuffer :wk "Ibuffer")
-   "b k" '(kill-this-buffer :wk "Kill this buffer")
-   "b n" '(next-buffer :wk "Next buffer")
-   "b p" '(previous-buffer :wk "Previous buffer")
-   "b r" '(revert-buffer :wk "Reload buffer")
-   "b s" '(save-buffer :wk "Save buffer")
-   "b c" '(save-buffers-kill-terminal :wk "Save and close"))
+    "b" '(:ignore t :wk "buffer")
+    "b b" '(switch-to-buffer :wk "Switch buffer")
+    "b i" '(ibuffer :wk "Ibuffer")
+    "b k" '(kill-this-buffer :wk "Kill this buffer")
+    "b n" '(next-buffer :wk "Next buffer")
+    "b p" '(previous-buffer :wk "Previous buffer")
+    "b r" '(revert-buffer :wk "Reload buffer")
+    "b s" '(save-buffer :wk "Save buffer")
+    "b c" '(save-buffers-kill-terminal :wk "Save and close"))
   (kr/leader-keys
     "e" '(:ignore t :wk "Eshell/Evaluate")
     "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
@@ -386,6 +385,8 @@
     "e e" '(eval-expression :wk "Evaluate an elisp expression")
     "e h" '(counsel-esh-history :wk "Eshell history")
     "e s" '(eshell :wk "Eshell"))
+  (kr/goto-keys
+    "l" '(consult-goto-line :wk "consult-goto-line"))
   (kr/leader-keys
     "h" '(:ignore t :wk "Help")
     "h f" '(describe-function :wk "Describe function")
@@ -393,9 +394,14 @@
     "h c" '(describe-key-briefly :wk "Describe keybinding brief")
     "h v" '(describe-variable :wk "Describe variable"))
   (kr/leader-keys
+    "r" '(:ignore t :wk "Register")
+    "r s" '(consult-register-store :wk "Register store")
+    "r l" '(consult-register-load :wk "Register load")
+    "r r" '(consult-register :wk "Register view"))
+  (kr/leader-keys
     "t" '(:ignore t :wk "Toggle")
     "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
-    "t t" '(visual-line-mode :wk "Toggle word wrap")
+    "t t" '(toggle-truncate-lines :wk "Toggle word wrap")
     "t p" '(dired-sidebar-toggle-sidebar :wk "Toggle sidebar"))
   (kr/leader-keys
     "w" '(:ignore t :wk "Windows")
@@ -409,35 +415,54 @@
     "w >" '(buf-move-up :wk "Buffer move up")
     "w U" '(buf-move-right :wk "Buffer move right"))
   (general-define-key
-   :states 'normal
+   :states '(normal visual)
    ;;; Movement
-   "o" 'evil-backward-char
-   "e" 'evil-next-line
-   "." 'evil-previous-line
-   "u" 'evil-forward-char
-   "h" 'left-word
-   "t" 'evil-forward-paragraph
-   "c" 'evil-backward-paragraph
-   "n" 'right-word
-   "C-o" 'evil-first-non-blank
-   "C-e" 'scroll-down-hold-cursor
-   "C-." 'scroll-up-hold-cursor
-   "C-u" 'evil-end-of-line
-   "C-h" 'beginning-of-buffer
-   "C-t" 'evil-scroll-page-down
-   "C-c" 'evil-scroll-page-up
-   "C-n" 'end-of-buffer
-   "M-." 'move-text-up
-   "M-e" 'move-text-down
+   "h" 'evil-backward-char
+   "t" 'evil-next-line
+   "c" 'evil-previous-line
+   "n" 'evil-forward-char
+   "o" 'evil-first-non-blank
+   "e" 'scroll-up-hold-cursor
+   "." 'scroll-down-hold-cursor
+   "u" 'evil-end-of-line
+   "C-h" 'left-word
+   "C-t" 'evil-forward-paragraph
+   "C-c" 'evil-backward-paragraph
+   "C-n" 'right-word
+   "C-o" 'beginning-of-buffer
+   "C-e" 'evil-scroll-page-down
+   "C-." 'evil-scroll-page-up
+   "C-u" 'end-of-buffer
+   "M-t" 'move-text-down
+   "M-c" 'move-text-up
+   ;;; Editing
+   "a" 'evil-insert
+   "A" 'evil-insert-line
+   "i" 'evil-append
+   "I" 'evil-append-line
+   "," 'evil-open-below
+   "<" 'evil-open-above
+   ";" 'evil-undo
+   "q" 'kill-region
+   "j" 'kill-ring-save
+   "k" 'yank
+   "/" 'consult-line
+   "?" 'consult-line-multi
+   "C-/" 'query-replace
+   "C-?" 'query-replace-regexp
    )
   (general-define-key
+   "TAB" 'indent-for-tab-command
+   "<C-tab>" 'dabbrev-expand
+   "C-s" 'save-buffer
+   "C-;" 'evil-undo
+   "C-q" 'kill-region
+   "C-j" 'kill-ring-save
+   "C-k" 'yank
+   "C-o" 'evil-first-non-blank
+   "C-u" 'evil-end-of-line
    "<C-return>" 'insert-line-below
    "C-<S-return>" 'insert-line-above
-   ;;"C-9" 'scroll-up-hold-cursor
-   ;;"C-0" 'scroll-down-hold-cursor
-   ;;;
-   ;;"C-=" 'transpose-words
-   ;;"C-/" 'transpose-backwords
    ))
 
 ;;
