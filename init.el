@@ -296,6 +296,15 @@
   (windmove-default-keybindings))
 
 ;;
+;; COPILOT
+;;
+(elpaca (copilot
+         :type git :host github
+         :repo "zerolfx/copilot.el" :branch "main"
+         :files ("dist" "*.el")))
+(add-hook 'prog-mode-hook 'copilot-mode)
+
+;;
 ;; FUNCTIONS
 ;;
 (defun replace-in-region (old-word new-word)
@@ -453,14 +462,17 @@
    )
   (general-define-key
    "TAB" 'indent-for-tab-command
+   "<backtab>" 'copilot-accept-completion
    "<C-tab>" 'dabbrev-expand
    "C-s" 'save-buffer
+   "C-'" 'save-buffers-kill-terminal
    "C-;" 'evil-undo
    "C-q" 'kill-region
    "C-j" 'kill-ring-save
    "C-k" 'yank
    "C-o" 'evil-first-non-blank
    "C-u" 'evil-end-of-line
+   "C-c C-c" 'evil-normal-state
    "<C-return>" 'insert-line-below
    "C-<S-return>" 'insert-line-above
    ))
