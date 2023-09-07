@@ -354,6 +354,15 @@
   (open-line 1)
   (next-line 1)
   (yank))
+;;;
+(defun comment-or-uncomment-region-or-line ()
+    "Comments or uncomments the region or the current line if there's no active region."
+    (interactive)
+    (let (beg end)
+        (if (region-active-p)
+            (setq beg (region-beginning) end (region-end))
+            (setq beg (line-beginning-position) end (line-end-position)))
+        (comment-or-uncomment-region beg end)))
 
 ;;
 ;; GENERAL/CUSTOM KEYBINDINGS
@@ -403,6 +412,19 @@
     "h c" '(describe-key-briefly :wk "Describe keybinding brief")
     "h v" '(describe-variable :wk "Describe variable"))
   (kr/leader-keys
+    "p" '(:ignore t :wk "Projectile")
+    "p a" '(projectile-find-other-file :wk "Find other file")
+    "p b" '(projectile-switch-to-buffer :wk "Switch buffer")
+    "p c" '(projectile-compile-project :wk "Compile project")
+    "p f" '(projectile-find-file :wk "Find file in project")
+    "p g" '(projectile-grep :wk "Grep project")
+    "p k" '(projectile-kill-buffers :wk "Kill buffers")
+    "p p" '(projectile-switch-project :wk "Switch project")
+    "p r" '(projectile-replace :wk "Replace in project")
+    "p t" '(projectile-toggle-between-implementation-and-test :wk "Toggle between implementation and test")
+    "p T" '(projectile-test-project :wk "Test project")
+    "p u" '(projectile-run-project :wk "Run project"))
+  (kr/leader-keys
     "r" '(:ignore t :wk "Register")
     "r s" '(consult-register-store :wk "Register store")
     "r l" '(consult-register-load :wk "Register load")
@@ -411,18 +433,15 @@
     "t" '(:ignore t :wk "Toggle")
     "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
     "t t" '(toggle-truncate-lines :wk "Toggle word wrap")
-    "t p" '(dired-sidebar-toggle-sidebar :wk "Toggle sidebar"))
+    "t d" '(dired-sidebar-toggle-sidebar :wk "Toggle sidebar")
+    "t c" '(copilot-mode :wk "Toggle copilot"))
   (kr/leader-keys
     "w" '(:ignore t :wk "Windows")
     "w c" '(evil-window-delete :wk "Close window")
     "w n" '(evil-window-new :wk "New window")
     "w s" '(evil-window-split :wk "Horizontal split")
     "w v" '(evil-window-vsplit :wk "Vertical split")
-    "w w" '(delete-other-windows :wk "Next window")
-    "w O" '(buf-move-left :wk "Buffer move left")
-    "w E" '(buf-move-down :wk "Buffer move down")
-    "w >" '(buf-move-up :wk "Buffer move up")
-    "w U" '(buf-move-right :wk "Buffer move right"))
+    "w w" '(delete-other-windows :wk "Next window"))
   (general-define-key
    :states '(normal visual)
    ;;; Movement
@@ -444,6 +463,8 @@
    "C-u" 'end-of-buffer
    "M-t" 'move-text-down
    "M-c" 'move-text-up
+   "C-M-h" 'transpose-backwords
+   "C-M-n" 'transpose-words
    ;;; Editing
    "a" 'evil-insert
    "A" 'evil-insert-line
@@ -461,8 +482,8 @@
    "C-?" 'query-replace-regexp
    )
   (general-define-key
-   "TAB" 'indent-for-tab-command
-   "<backtab>" 'copilot-accept-completion
+   "<backtab>" 'indent-for-tab-command
+   "TAB" 'copilot-accept-completion
    "<C-tab>" 'dabbrev-expand
    "C-s" 'save-buffer
    "C-'" 'save-buffers-kill-terminal
@@ -472,6 +493,7 @@
    "C-k" 'yank
    "C-o" 'evil-first-non-blank
    "C-u" 'evil-end-of-line
+   "C-\\" 'comment-or-uncomment-region-or-line
    "C-c C-c" 'evil-normal-state
    "<C-return>" 'insert-line-below
    "C-<S-return>" 'insert-line-above
@@ -513,3 +535,15 @@
 	  which-key-allow-imprecise-window-fit nil
 	  which-key-separator " → " ))
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(safe-local-variable-values '((projectile-project-run-cmd . "ruby main.rb"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
