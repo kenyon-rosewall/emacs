@@ -61,19 +61,19 @@
 ;;
 ;; THEMES
 ;;
-;; Or, if you use `use-package', do something like this:
-(use-package ample-theme
-  :init (progn (load-theme 'ample t t)
-               (enable-theme 'ample))
-  :defer t
-  :ensure t)
-(with-eval-after-load "ample-theme"
-  ;; add one of these blocks for each of the themes you want to customize
-  (custom-theme-set-faces
-   'ample
-   ;; this will overwride the color of strings just for ample-theme
-   '(font-lock-string-face ((t (:foreground "#bdba81"))))))
+(use-package material-theme
+  :init
+  (load-theme 'material t))
 
+;;
+;; DIMMER
+;;
+(use-package dimmer
+  :init
+  (dimmer-configure-which-key)
+  (dimmer-mode t)
+  :config
+  (setq dimmer-fraction 0.6))
 ;;
 ;; ALL THE ICONS
 ;;
@@ -196,11 +196,19 @@
 (use-package typescript-mode)
 
 ;;
+;; SMEX
+;;
+(use-package smex
+  :ensure t
+  :config
+  (smex-initialize))
+
+;;
 ;; PROJECTILE
 ;;
 (use-package projectile
   :bind (("M-p" . projectile-command-map))
-  :config
+  :init
   (projectile-mode 1))
 
 ;;
@@ -222,6 +230,44 @@
   (setq dired-sidebar-theme 'vscode)
   (setq dired-sidebar-use-term-integration t)
   (setq dired-sidebar-use-custom-font t))
+
+;;
+;; TELEPHONE LINE
+;;
+(use-package telephone-line
+  :config
+  (setq telephone-line-primary-left-separator 'telephone-line-gradient
+        telephone-line-secondary-left-separator 'telephone-line-nil
+        telephone-line-primary-right-separator 'telephone-line-gradient
+        telephone-line-secondary-right-separator 'telephone-line-nil)
+  (setq telephone-line-height 24
+        telephone-line-evil-use-short-tag t) 
+  (telephone-line-mode 1))
+
+;;
+;; CENTAUR TABS
+;;
+(use-package centaur-tabs
+  :demand
+  :init
+  (add-hook 'dired-mode 'centaur-tabs-local-mode)
+  (add-hook 'dashboard-mode 'centaur-tabs-local-mode)
+  (add-hook 'term-mode 'centaur-tabs-local-mode)
+  (add-hook 'calendar-mode 'centaur-tabs-local-mode)
+  (add-hook 'org-agenda-mode 'centaur-tabs-local-mode) 
+  :config
+  (setq centaur-tabs-style "bar"
+        centaur-tabs-height 32
+        centaur-tabs-show-new-tab-button nil
+        centaur-tabs-set-icons t
+        centaur-tabs-gray-out-icons 'buffer
+        centaur-tabs-set-bar 'over
+        centaur-tabs-set-modified-marker t
+        centaur-tabs-modified-marker "●"
+        centaur-tabs-set-close-button nil)
+  (centaur-tabs-mode t)
+  (centaur-tabs-headline-match)
+  (centaur-tabs-group-by-projectile-project))
 
 ;;
 ;; ESHELL
@@ -445,10 +491,10 @@
   (general-define-key
    :states '(normal visual)
    ;;; Movement
-   "h" 'evil-backward-char
+   "h" 'left-char
    "t" 'evil-next-line
    "c" 'evil-previous-line
-   "n" 'evil-forward-char
+   "n" 'right-char
    "o" 'evil-first-non-blank
    "e" 'scroll-up-hold-cursor
    "." 'scroll-down-hold-cursor
@@ -480,8 +526,14 @@
    "?" 'consult-line-multi
    "C-/" 'query-replace
    "C-?" 'query-replace-regexp
+   ;;; Other
+   "C-=" 'text-scale-increase
+   "C--" 'text-scale-decrease
+   "<M-right>" 'centaur-tabs-forward
+   "<M-left>" 'centaur-tabs-backward
    )
   (general-define-key
+   :keymaps 'global
    "<backtab>" 'indent-for-tab-command
    "TAB" 'copilot-accept-completion
    "<C-tab>" 'dabbrev-expand
@@ -497,6 +549,9 @@
    "C-c C-c" 'evil-normal-state
    "<C-return>" 'insert-line-below
    "C-<S-return>" 'insert-line-above
+   "M-x" 'smex
+   "M-X" 'smex-major-mode-commands
+   "C-x M-x" 'execute-extended-command
    ))
 
 ;;
@@ -512,6 +567,7 @@
 (setq make-backup-file-name-function 'ignore)
 (setq make-backup-files nil)
 (setq create-lockfiles nil)
+(setq selection-mode 1)
 
 ;;
 ;; WHICH KEY
@@ -540,7 +596,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(safe-local-variable-values '((projectile-project-run-cmd . "ruby main.rb"))))
+ '(safe-local-variable-values
+   '((projectile-project-test-cmd)
+     (projectile-project-compilation-cmd)
+     (projectile-project-run-cmd . "ruby main.rb"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
