@@ -71,9 +71,11 @@
 (use-package dimmer
   :init
   (dimmer-configure-which-key)
+  (dimmer-configure-magit)
+  (dimmer-configure-gnus)
   (dimmer-mode t)
   :config
-  (setq dimmer-fraction 0.6))
+  (setq dimmer-fraction 0.5))
 ;;
 ;; ALL THE ICONS
 ;;
