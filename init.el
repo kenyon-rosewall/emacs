@@ -198,14 +198,6 @@
 (use-package typescript-mode)
 
 ;;
-;; SMEX
-;;
-(use-package smex
-  :ensure t
-  :config
-  (smex-initialize))
-
-;;
 ;; PROJECTILE
 ;;
 (use-package projectile
@@ -257,6 +249,7 @@
   (add-hook 'term-mode 'centaur-tabs-local-mode)
   (add-hook 'calendar-mode 'centaur-tabs-local-mode)
   (add-hook 'org-agenda-mode 'centaur-tabs-local-mode) 
+  (add-hook 'magit-mode 'centaur-tabs-local-mode)
   :config
   (setq centaur-tabs-style "bar"
         centaur-tabs-height 32
@@ -267,9 +260,20 @@
         centaur-tabs-set-modified-marker t
         centaur-tabs-modified-marker "●"
         centaur-tabs-set-close-button nil)
-  (centaur-tabs-mode t)
   (centaur-tabs-headline-match)
-  (centaur-tabs-group-by-projectile-project))
+  (centaur-tabs-group-by-projectile-project)
+  (defun centaur-tabs-buffer-groups ()
+    "Use as few groups as possible."
+    (list (cond ((string-equal "*" (substring (buffer-name) 0 1))
+                 (cond ((string-equal "eglot" (downcase (substring (buffer-name) 1 6)))
+                        "Eglot")
+                       (t
+                        "Tools")))
+                ((string-equal "magit" (downcase (substring (buffer-name) 0 5)))
+                 "Magit")
+                (t
+                 "Default"))))
+  (centaur-tabs-mode t))
 
 ;;
 ;; ESHELL
