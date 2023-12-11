@@ -136,8 +136,31 @@
 (global-hl-line-mode 1)
 (defun nil-bell ())
 (setq ring-bell-function 'nil-bell)
-(setq-default tab-width 2
-	            indent-tabs-mode nil)
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . js-jsx-mode))
+
+;;
+;; INDENTATION
+;;
+(setq custom-indent-width 2)
+(defun disable-tabs () (setq indent-tabs-mode nil))
+(add-hook 'prog-mode-hook 'disable-tabs)
+(add-hook 'typescript-mode-hook 'disable-tabs)
+(setq-default js-indent-level custom-indent-width)
+(setq-default js-jsx-indent-level custom-indent-width)
+(setq-default typescript-indent-level custom-indent-width)
+(setq-default web-mode-markup-indent-offset custom-indent-width)
+(setq-default web-mode-css-indent-offset custom-indent-width)
+(setq-default web-mode-code-indent-offset custom-indent-width)
+(setq-default js2-indent-level custom-indent-width)
+(setq-default evil-shift-width custom-indent-width)
+;;; (setq-default electric-indent-inhibit t)
+;;; Show whitespace characters
+(setq whitespace-style '(face tabs tab-mark trailing))
+(custom-set-faces
+ '(whitespace-tab ((t (:foreground "#636363")))))
+(setq whitespace-display-mappings
+  '((tab-mark 9 [124 9] [92 9]))) ; 124 is the ascii ID for '\|'
+(global-whitespace-mode) ; Enable whitespace mode everywhere
 
 ;;
 ;; IVY
@@ -241,39 +264,46 @@
 ;;
 ;; CENTAUR TABS
 ;;
-(use-package centaur-tabs
-  :demand
-  :init
-  (add-hook 'dired-mode 'centaur-tabs-local-mode)
-  (add-hook 'dashboard-mode 'centaur-tabs-local-mode)
-  (add-hook 'term-mode 'centaur-tabs-local-mode)
-  (add-hook 'calendar-mode 'centaur-tabs-local-mode)
-  (add-hook 'org-agenda-mode 'centaur-tabs-local-mode) 
-  (add-hook 'magit-mode 'centaur-tabs-local-mode)
-  :config
-  (setq centaur-tabs-style "bar"
-        centaur-tabs-height 32
-        centaur-tabs-show-new-tab-button nil
-        centaur-tabs-set-icons t
-        centaur-tabs-gray-out-icons 'buffer
-        centaur-tabs-set-bar 'over
-        centaur-tabs-set-modified-marker t
-        centaur-tabs-modified-marker "●"
-        centaur-tabs-set-close-button nil)
-  (centaur-tabs-headline-match)
-  (centaur-tabs-group-by-projectile-project)
-  (defun centaur-tabs-buffer-groups ()
-    "Use as few groups as possible."
-    (list (cond ((string-equal "*" (substring (buffer-name) 0 1))
-                 (cond ((string-equal "eglot" (downcase (substring (buffer-name) 1 6)))
-                        "Eglot")
-                       (t
-                        "Tools")))
-                ((string-equal "magit" (downcase (substring (buffer-name) 0 5)))
-                 "Magit")
-                (t
-                 "Default"))))
-  (centaur-tabs-mode t))
+;; (use-package centaur-tabs
+;;   :demand
+;;   :hook
+;;   (dired-mode . centaur-tabs-local-mode)
+;;   (dashboard-mode . centaur-tabs-local-mode)
+;;   (term-mode . centaur-tabs-local-mode)
+;;   (calendar-mode . centaur-tabs-local-mode)
+;;   (org-agenda-mode . centaur-tabs-local-mode) 
+;;   (magit-mode . centaur-tabs-local-mode)
+;;   :config
+;;   (defun centaur-tabs-hide-tab (x)
+;;     "Do not show buffr X in tabs."
+;;     (let ((name (format "%s" x)))
+;;       (or
+;;        (window dedicated-p (selected-window))
+;;        (string-prefix-p "*" name)
+;;        (string-prefix-p "magit" name))))
+;;   (setq centaur-tabs-style "bar"
+;;         centaur-tabs-height 32
+;;         centaur-tabs-show-new-tab-button nil
+;;         centaur-tabs-set-icons t
+;;         centaur-tabs-gray-out-icons 'buffer
+;;         centaur-tabs-set-bar 'over
+;;         centaur-tabs-set-modified-marker t
+;;         centaur-tabs-modified-marker "●"
+;;         centaur-tabs-set-close-button nil)
+;;   (centaur-tabs-headline-match)
+;;   (centaur-tabs-group-by-projectile-project)
+;;   (defun centaur-tabs-buffer-groups ()
+;;     "Use as few groups as possible."
+;;     (list (cond ((string-equal "*" (substring (buffer-name) 0 1))
+;;                  (cond ((string-equal "eglot" (downcase (substring (buffer-name) 1 6)))
+;;                         "Eglot")
+;;                        (t
+;;                         "Tools")))
+;;                 ((string-equal "magit" (downcase (substring (buffer-name) 0 5)))
+;;                  "Magit")
+;;                 (t
+;;                  "Default"))))
+;;   (centaur-tabs-mode t))
 
 ;;
 ;; ESHELL
@@ -535,11 +565,11 @@
    ;;; Other
    "C-=" 'text-scale-increase
    "C--" 'text-scale-decrease
-   "<M-right>" 'centaur-tabs-forward
-   "<M-left>" 'centaur-tabs-backward
+   ;; "<M-right>" 'centaur-tabs-forward
+   ;; "<M-left>" 'centaur-tabs-backward
    )
   (general-define-key
-   :keymaps 'global
+   :keymaps '(global cc-mode)
    "<backtab>" 'indent-for-tab-command
    "TAB" 'copilot-accept-completion
    "<C-tab>" 'dabbrev-expand
@@ -555,9 +585,6 @@
    "C-c C-c" 'evil-normal-state
    "<C-return>" 'insert-line-below
    "C-<S-return>" 'insert-line-above
-   "M-x" 'smex
-   "M-X" 'smex-major-mode-commands
-   "C-x M-x" 'execute-extended-command
    ))
 
 ;;
