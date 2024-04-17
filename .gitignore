@@ -60,3 +60,4 @@ tramp
 recentf
 transient/
 ido.last
+.cache/

@@ -1,7 +1,7 @@
 ;;
 ;; ELPACA
 ;;
-(defvar elpaca-installer-version 0.5)
+(defvar elpaca-installer-version 0.7)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
 (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
@@ -128,7 +128,7 @@
 ;;
 (menu-bar-mode -1)
 (tool-bar-mode -1)
-(scroll-bar-mode -1)
+'''(scroll-bar-mode nil)
 (setq scroll-step 3)
 (display-time)
 (global-display-line-numbers-mode 1)
